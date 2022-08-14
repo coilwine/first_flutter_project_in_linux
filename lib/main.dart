@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:first_flutter_project_in_manjaro/view/home/home_view.dart';
+import 'view/home/home_view.dart';
 
 void main() {
   runApp(const MyApp());

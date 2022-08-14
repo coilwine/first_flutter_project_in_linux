@@ -1,10 +1,9 @@
-import 'package:first_flutter_project_in_manjaro/components/card/categories_card.dart';
-import 'package:flutter/material.dart';
-
-import '../../constants/color_constants.dart';
-
+import '../../core/extension/context_extension.dart';
+import '../../components/card/categories_card.dart';
+import '../../core/base/base_state.dart';
 import 'home_model.dart';
-
+import 'home_view_model.dart';
+import 'package:flutter/material.dart';
 part 'home_string_values.dart';
 
 class HomeView extends StatefulWidget {
@@ -14,58 +13,75 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends State<HomeView> with BaseState {
   HomeModel? model;
   final _HomeStringValues values = _HomeStringValues();
-
+  final HomeViewModel viewModel = HomeViewModel();
+  int value = 0;
   @override
   void initState() {
     super.initState();
-    model = HomeModel('title', 'description', 'data');
+    model =
+        HomeModel(values.cardTitle, values.cardDescription, values.cardData);
   }
+
+  void _changeValue() {
+    value = viewModel.randomValue();
+    setState(() {});
+  }
+
+  Color get _primary =>
+      value % 2 == 0 ? colorConstants.appleBlossom : colorConstants.tundora;
+  Color get _secondary =>
+      value % 2 == 0 ? colorConstants.tundora : colorConstants.appleBlossom;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          values.title,
-        ),
-      ),
-      body: Column(
-        children: [
-          Text(
-            values.headline1Title,
-            style: Theme.of(context)
-                .textTheme
-                .headline1
-                ?.copyWith(color: ColorConstants.instance.appleBlossom),
-          ),
-          const Expanded(
-            child: CategoriesCard(name: '50+', body: 'Categories'),
-          ),
-          Expanded(
-            flex: 2,
-            child: ListView(
-              children: [
-                Container(
-                  height: 250,
-                  color: ColorConstants.instance.appleBlossom,
-                ),
-                Container(
-                  height: 50,
-                  color: ColorConstants.instance.tundora,
-                ),
-                Container(
-                  height: 250,
-                  color: ColorConstants.instance.appleBlossom,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      floatingActionButton: buildFloatingActionButton(),
+      appBar: AppBar(centerTitle: true, title: Text(values.title)),
+      body: Column(children: [
+        buildText(context),
+        Expanded(child: buildCategoriesCard()),
+        Expanded(
+          flex: 2,
+          child: buildListView(context),
+        )
+      ]),
     );
+  }
+
+  FloatingActionButton buildFloatingActionButton() =>
+      FloatingActionButton(onPressed: _changeValue, child: Text('$value'));
+
+  Text buildText(BuildContext context) {
+    return Text(values.headline1Title,
+        style: Theme.of(context)
+            .textTheme
+            .headline1
+            ?.copyWith(color: colorConstants.appleBlossom));
+  }
+
+  CategoriesCard buildCategoriesCard() {
+    return CategoriesCard(
+        name: model?.title ?? values.err,
+        body: model?.description ?? values.err);
+  }
+
+  ListView buildListView(BuildContext context) {
+    return ListView(children: [
+      AnimatedContainer(
+          duration: durationConstants.durationLow,
+          height: context.dynamicHeight(0.1),
+          color: _primary),
+      AnimatedContainer(
+          duration: durationConstants.durationLow,
+          height: context.dynamicHeight(0.01),
+          color: _secondary),
+      AnimatedContainer(
+          duration: durationConstants.durationLow,
+          height: context.dynamicHeight(0.1),
+          color: _primary)
+    ]);
   }
 }
