@@ -10,4 +10,6 @@ class ColorConstants {
   final appleBlossom = const Color(0xffb04b4b);
   final white = const Color(0xFFFFFFFF);
   final tundora = const Color(0xFF413F3F);
+  final malachite = const Color(0xFF0ED32F);
+  final sanMarino = const Color(0xFF486EA8);
 }

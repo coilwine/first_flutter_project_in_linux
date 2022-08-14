@@ -17,23 +17,32 @@ class _HomeViewState extends State<HomeView> with BaseState {
   HomeModel? model;
   final _HomeStringValues values = _HomeStringValues();
   final HomeViewModel viewModel = HomeViewModel();
+
   int value = 0;
+
   @override
   void initState() {
     super.initState();
     model =
         HomeModel(values.cardTitle, values.cardDescription, values.cardData);
+    getSharedValues();
+  }
+
+  Future<void> getSharedValues() async {
+    value = (await viewModel.getValueOnPreferences())!;
+    setState(() {});
   }
 
   void _changeValue() {
     value = viewModel.randomValue();
+    viewModel.setValueOnPreferences(value);
     setState(() {});
   }
 
   Color get _primary =>
       value % 2 == 0 ? colorConstants.appleBlossom : colorConstants.tundora;
   Color get _secondary =>
-      value % 2 == 0 ? colorConstants.tundora : colorConstants.appleBlossom;
+      value % 2 == 0 ? colorConstants.sanMarino : colorConstants.malachite;
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +86,14 @@ class _HomeViewState extends State<HomeView> with BaseState {
       AnimatedContainer(
           duration: durationConstants.durationLow,
           height: context.dynamicHeight(0.01),
-          color: _secondary),
+          color: _primary),
       AnimatedContainer(
           duration: durationConstants.durationLow,
           height: context.dynamicHeight(0.1),
+          color: _secondary),
+      AnimatedContainer(
+          duration: durationConstants.durationLow,
+          height: context.dynamicHeight(0.12),
           color: _primary)
     ]);
   }
